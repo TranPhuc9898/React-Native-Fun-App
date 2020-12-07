@@ -1,36 +1,128 @@
+import 'react-native-gesture-handler';
 import React from 'react';
-import {NavigationContainer, Route} from '@react-navigation/native';
-import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import TabNavigator, {TabItem} from './TabNavigator';
+import {Button, Text, View} from 'react-native';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-type AppNavigationProps = {
-  isAuthorized: boolean;
-  tabs: TabItem[];
-  unauthorizedNavigator?: () => JSX.Element;
-  tabScreenOptions?:
-    | BottomTabNavigationOptions
-    | ((props: {
-        route: Route<string, object | undefined>;
-        navigation: any;
-      }) => BottomTabNavigationOptions)
-    | undefined;
-};
+import AppNavigation from './AppNavigation';
+import {TabItem} from './TabNavigator';
 
-const AppNavigation = ({
-  isAuthorized,
-  tabs,
-  unauthorizedNavigator,
-  tabScreenOptions,
-}: AppNavigationProps) => {
+function DetailsScreen() {
   return (
-    <NavigationContainer>
-      {isAuthorized ? (
-        <TabNavigator screenOptions={tabScreenOptions} tabs={tabs} />
-      ) : (
-        unauthorizedNavigator && unauthorizedNavigator()
-      )}
-    </NavigationContainer>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Details!</Text>
+    </View>
+  );
+}
+
+function HomeScreen({navigation}: {navigation: StackNavigationProp}) {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Home screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate('Details')}
+      />
+    </View>
+  );
+}
+
+function SettingsScreen({navigation}: {navigation: StackNavigationProp}) {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Settings screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate('Details')}
+      />
+    </View>
+  );
+}
+
+const HomeStack = createStackNavigator();
+
+function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="Details" component={DetailsScreen} />
+    </HomeStack.Navigator>
+  );
+}
+
+const SettingsStack = createStackNavigator();
+
+function SettingsStackScreen() {
+  return (
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen name="Settings" component={SettingsScreen} />
+      <SettingsStack.Screen name="Details" component={DetailsScreen} />
+    </SettingsStack.Navigator>
+  );
+}
+
+function LoginScreen({navigation}: {navigation: StackNavigationProp}) {
+  return (
+    <View>
+      <Text>{'Login Screen'}</Text>
+      <Button title={'Sign Up'} onPress={() => navigation.navigate('SignUp')} />
+    </View>
+  );
+}
+
+function SignUpScreen() {
+  return (
+    <View>
+      <Text>{'Sign Up Screen'}</Text>
+    </View>
+  );
+}
+
+const UnauthorizedStack = createStackNavigator();
+
+const tabs: TabItem[] = [
+  {
+    tabName: 'Home',
+    tabStack: HomeStackScreen,
+  },
+  {
+    tabName: 'Settings',
+    tabStack: SettingsStackScreen,
+  },
+];
+
+const UnauthorizedNavigator = () => (
+  <UnauthorizedStack.Navigator>
+    <UnauthorizedStack.Screen name="Login" component={LoginScreen} />
+    <UnauthorizedStack.Screen name="SignUp" component={SignUpScreen} />
+  </UnauthorizedStack.Navigator>
+);
+
+export default () => {
+  const isSignIn = true;
+
+  return (
+    <AppNavigation
+      isAuthorized={isSignIn}
+      tabs={tabs}
+      unauthorizedNavigator={UnauthorizedNavigator}
+      tabScreenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName = 'home';
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'cogs' : 'cogs';
+          }
+
+          // You can return any component that you like here!
+          return <FontAwesomeIcon name={iconName} size={size} color={color} />;
+        },
+      })}
+    />
   );
 };
-
-export default AppNavigation;
