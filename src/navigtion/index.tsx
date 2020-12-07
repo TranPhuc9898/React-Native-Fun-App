@@ -1,15 +1,12 @@
 import React from 'react';
 import {NavigationContainer, Route} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 import TabNavigator, {TabItem} from './TabNavigator';
-
-const Stack = createStackNavigator();
 
 type AppNavigationProps = {
   isAuthorized: boolean;
   tabs: TabItem[];
-  unauthorizedScreens?: JSX.Element;
+  unauthorizedNavigator?: () => JSX.Element;
   tabScreenOptions?:
     | BottomTabNavigationOptions
     | ((props: {
@@ -22,7 +19,7 @@ type AppNavigationProps = {
 const AppNavigation = ({
   isAuthorized,
   tabs,
-  unauthorizedScreens,
+  unauthorizedNavigator,
   tabScreenOptions,
 }: AppNavigationProps) => {
   return (
@@ -30,7 +27,7 @@ const AppNavigation = ({
       {isAuthorized ? (
         <TabNavigator screenOptions={tabScreenOptions} tabs={tabs} />
       ) : (
-        <Stack.Navigator>{unauthorizedScreens}</Stack.Navigator>
+        unauthorizedNavigator && unauthorizedNavigator()
       )}
     </NavigationContainer>
   );
