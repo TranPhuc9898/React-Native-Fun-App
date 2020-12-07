@@ -5,6 +5,7 @@ import {
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 import AppNavigation from './navigtion';
 import {TabItem} from './navigtion/TabNavigator';
@@ -103,13 +104,27 @@ const UnauthorizedNavigator = () => (
 );
 
 const App = () => {
-  const isSignIn = false;
+  const isSignIn = true;
 
   return (
     <AppNavigation
       isAuthorized={isSignIn}
       tabs={tabs}
       unauthorizedNavigator={UnauthorizedNavigator}
+      tabScreenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'cogs' : 'cogs';
+          }
+
+          // You can return any component that you like here!
+          return <FontAwesomeIcon name={iconName} size={size} color={color} />;
+        },
+      })}
     />
   );
 };
