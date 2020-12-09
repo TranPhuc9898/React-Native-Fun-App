@@ -1,5 +1,6 @@
 import React, {ComponentClass, FunctionComponent} from 'react';
 import {
+  BottomTabBarOptions,
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
@@ -10,9 +11,17 @@ export type TabItem = {
   tabStack: ComponentClass<any, any> | FunctionComponent<any>;
 };
 
-type TabNavigatorProps = {
+export type TabNavigatorProps = {
   tabs: TabItem[];
   screenOptions?:
+    | BottomTabNavigationOptions
+    | ((props: {
+        route: Route<string, object | undefined>;
+        navigation: any;
+      }) => BottomTabNavigationOptions)
+    | undefined;
+  tabBarOptions?: BottomTabBarOptions;
+  tabScreenOptions?:
     | BottomTabNavigationOptions
     | ((props: {
         route: Route<string, object | undefined>;
@@ -23,14 +32,20 @@ type TabNavigatorProps = {
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator: React.FC<TabNavigatorProps> = ({tabs, screenOptions}) => {
+const TabNavigator: React.FC<TabNavigatorProps> = ({
+  tabs,
+  screenOptions,
+  tabBarOptions,
+  tabScreenOptions,
+}) => {
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
+    <Tab.Navigator screenOptions={screenOptions} tabBarOptions={tabBarOptions}>
       {tabs.map((item) => {
         return (
           <Tab.Screen
             key={item.tabName}
             name={item.tabName}
+            options={tabScreenOptions}
             component={item.tabStack}
           />
         );

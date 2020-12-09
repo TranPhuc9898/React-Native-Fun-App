@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/stack';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-import AppNavigation from './AppNavigation';
+import AppNavigation, {Screen} from './AppNavigation';
 import {TabItem} from './TabNavigator';
 
 function DetailsScreen() {
@@ -24,7 +24,7 @@ function HomeScreen({navigation}: {navigation: StackNavigationProp}) {
       <Text>Home screen</Text>
       <Button
         title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
+        onPress={() => navigation.navigate('MyModal')}
       />
     </View>
   );
@@ -81,7 +81,14 @@ function SignUpScreen() {
   );
 }
 
-const UnauthorizedStack = createStackNavigator();
+function ModalScreen({navigation}) {
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text style={{fontSize: 30}}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
+  );
+}
 
 const tabs: TabItem[] = [
   {
@@ -94,12 +101,23 @@ const tabs: TabItem[] = [
   },
 ];
 
-const UnauthorizedNavigator = () => (
-  <UnauthorizedStack.Navigator>
-    <UnauthorizedStack.Screen name="Login" component={LoginScreen} />
-    <UnauthorizedStack.Screen name="SignUp" component={SignUpScreen} />
-  </UnauthorizedStack.Navigator>
-);
+const unauthorizedScreens: Screen[] = [
+  {
+    screenName: 'Login',
+    screenComponent: LoginScreen,
+  },
+  {
+    screenName: 'SignUp',
+    screenComponent: SignUpScreen,
+  },
+];
+
+const modalScreens: Screen[] = [
+  {
+    screenName: 'MyModal',
+    screenComponent: ModalScreen,
+  },
+];
 
 export default () => {
   const isSignIn = true;
@@ -108,7 +126,8 @@ export default () => {
     <AppNavigation
       isAuthorized={isSignIn}
       tabs={tabs}
-      unauthorizedNavigator={UnauthorizedNavigator}
+      unauthorizedScreens={unauthorizedScreens}
+      modalScreens={modalScreens}
       tabScreenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName = 'home';
