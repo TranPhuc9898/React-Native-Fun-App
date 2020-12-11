@@ -9,23 +9,12 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 import AppNavigation, {Screen} from './AppNavigation';
 import {TabItem} from './TabNavigator';
+import HomeScreen from '../screens/HomeScreen/HomeScreen';
 
 function DetailsScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Details!</Text>
-    </View>
-  );
-}
-
-function HomeScreen({navigation}: {navigation: StackNavigationProp}) {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Home screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('MyModal')}
-      />
     </View>
   );
 }
