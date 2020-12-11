@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Product} from '../../types/types';
 import {FlatList} from 'react-native-gesture-handler';
 import ProductCard from '../../pureComponent/ProductCard/ProductCard';
 import {getCurrencyFormat} from '../../utils';
+import commonStyles from '../../theme/commonStyles';
+import {FloatingAction} from 'react-native-floating-action';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     firestore()
@@ -29,13 +31,19 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View
+      style={StyleSheet.flatten([commonStyles.fullScreen, commonStyles.p2])}>
       <FlatList
         numColumns={2}
         data={products}
         extraData={products}
         renderItem={renderProductItem}
         keyExtractor={(item) => item.productId}
+      />
+      <FloatingAction
+        onPressMain={() => {
+          navigation.navigate('FormProductModal');
+        }}
       />
     </View>
   );

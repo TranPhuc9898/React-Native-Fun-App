@@ -10,6 +10,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import AppNavigation, {Screen} from './AppNavigation';
 import {TabItem} from './TabNavigator';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
+import FormProductModal from '../modals/FormProductModal/FormProductModal';
 
 function DetailsScreen() {
   return (
@@ -105,6 +106,10 @@ const modalScreens: Screen[] = [
   {
     screenName: 'MyModal',
     screenComponent: ModalScreen,
+  },
+  {
+    screenName: 'FormProductModal',
+    screenComponent: FormProductModal,
   },
 ];
 

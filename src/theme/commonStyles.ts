@@ -1,6 +1,15 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
+  fullScreen: {
+    flex: 1,
+  },
+  p1: {
+    padding: 4,
+  },
+  p2: {
+    padding: 8,
+  },
   mt1: {
     marginTop: 4,
   },
