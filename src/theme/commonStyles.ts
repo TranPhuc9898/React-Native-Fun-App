@@ -10,6 +10,12 @@ export default StyleSheet.create({
   p2: {
     padding: 8,
   },
+  p3: {
+    padding: 12,
+  },
+  p4: {
+    padding: 16,
+  },
   mt1: {
     marginTop: 4,
   },

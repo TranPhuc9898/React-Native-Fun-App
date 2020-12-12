@@ -2,7 +2,7 @@ const getCurrencyFormat = (
   countryCode: string,
   languageCode: string,
   currencyCode: string,
-  value: string,
+  value: number,
 ) => {
   return new Intl.NumberFormat(`${languageCode}-${countryCode}`, {
     style: 'currency',
