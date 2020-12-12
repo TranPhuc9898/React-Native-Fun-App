@@ -25,9 +25,18 @@ const HomeScreen = ({navigation}) => {
         cardHeadline={item.brandName}
         cardImage={item.productImage.thumbnail[0]}
         cardTitle={item.productName}
-        cardSubtitle={getCurrencyFormat('VN', 'vi', 'VND', item.productPrice)}
+        cardSubtitle={getCurrencyFormat(
+          'VN',
+          'vi',
+          'VND',
+          Number(item.productPrice),
+        )}
       />
     );
+  };
+
+  const handleOnAddProductBtnClick = () => {
+    navigation.navigate('FormProductModal');
   };
 
   return (
@@ -41,9 +50,8 @@ const HomeScreen = ({navigation}) => {
         keyExtractor={(item) => item.productId}
       />
       <FloatingAction
-        onPressMain={() => {
-          navigation.navigate('FormProductModal');
-        }}
+        showBackground={false}
+        onPressMain={handleOnAddProductBtnClick}
       />
     </View>
   );
