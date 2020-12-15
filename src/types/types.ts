@@ -5,6 +5,7 @@ type Image = {
 };
 
 export type Product = {
+  id: string;
   brandName?: string;
   brandId?: string;
   productId?: string;

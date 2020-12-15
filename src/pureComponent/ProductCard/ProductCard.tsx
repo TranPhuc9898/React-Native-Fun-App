@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {
+  GestureResponderEvent,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Card, Text} from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
 import commonStyles from '../../theme/commonStyles';
@@ -9,6 +14,7 @@ type ProductCardProps = {
   cardHeadline?: string;
   cardTitle?: string;
   cardSubtitle?: string;
+  onCardLongPress?: (event: GestureResponderEvent) => void;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -16,9 +22,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   cardHeadline,
   cardTitle,
   cardSubtitle,
+  onCardLongPress,
 }) => {
   return (
-    <Card style={styles.defaultCard}>
+    <TouchableOpacity style={styles.defaultCard} onLongPress={onCardLongPress}>
       <FastImage
         style={styles.defaultImage}
         source={{uri: cardImage}}
@@ -28,6 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         style={StyleSheet.flatten([
           commonStyles.justifyContentCenter,
           commonStyles.alignItemsCenter,
+          commonStyles.p3,
         ])}>
         <Text
           style={StyleSheet.flatten([
@@ -53,13 +61,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {cardSubtitle}
         </Text>
       </View>
-    </Card>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   defaultCard: {
     flex: 1,
+    backgroundColor: 'white',
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: {
@@ -72,10 +81,11 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   defaultImage: {
-    aspectRatio: 3 / 4,
     width: '100%',
-    height: undefined,
-    borderRadius: 16,
+    height: 200,
+    maxHeight: 200,
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
   },
 });
 

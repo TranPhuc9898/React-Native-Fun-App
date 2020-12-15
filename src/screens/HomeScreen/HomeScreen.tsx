@@ -1,20 +1,33 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+import {deleteProduct} from '../../utils';
+
+import {Layout} from '@ui-kitten/components/ui';
+import PlusOutlineIcon from 'react-native-eva-icons/icons/PlusOutline';
 import {Product} from '../../types/types';
 import {FlatList} from 'react-native-gesture-handler';
 import ProductCard from '../../pureComponent/ProductCard/ProductCard';
 import {getCurrencyFormat} from '../../utils';
 import commonStyles from '../../theme/commonStyles';
-import {FloatingAction} from 'react-native-floating-action';
+import FloatingButton from '../../pureComponent/FloatingButton';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({navigation}: {navigation: StackNavigationProp<any>}) => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     const subscriber = firestore()
       .collection('products')
       .onSnapshot((QuerySnapshot) => {
-        const data = QuerySnapshot.docs.map((doc) => doc.data()) as Product[];
+        console.log('TCL: HomeScreen -> QuerySnapshot', QuerySnapshot);
+        const data = QuerySnapshot.docs.map(
+          (doc) =>
+            ({
+              ...doc.data(),
+              id: doc.id,
+            } as Product),
+        );
         setProducts(data);
       });
     return () => {
@@ -22,7 +35,32 @@ const HomeScreen = ({navigation}) => {
     };
   }, []);
 
+  const handleDeleteProduct = async (id: string) => {
+    if (id) {
+      try {
+        await deleteProduct(id);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const renderProductItem = ({item}: {item: Product}) => {
+    const handleOnCardLongPress = () => {
+      Alert.alert(
+        'Delete product',
+        'Are you sure you want to delete this product ?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => handleDeleteProduct(item.id || '')},
+        ],
+        {cancelable: true},
+      );
+    };
+
     return (
       <ProductCard
         cardHeadline={item.brandName}
@@ -34,6 +72,7 @@ const HomeScreen = ({navigation}) => {
           'VND',
           Number(item.productPrice),
         )}
+        onCardLongPress={handleOnCardLongPress}
       />
     );
   };
@@ -43,7 +82,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <View
+    <Layout
+      level={'1'}
       style={StyleSheet.flatten([commonStyles.fullScreen, commonStyles.p2])}>
       <FlatList
         numColumns={2}
@@ -54,12 +94,11 @@ const HomeScreen = ({navigation}) => {
           `${item.productId}${index}${item.productName}`
         }
       />
-      <FloatingAction
-        animated={false}
-        showBackground={false}
-        onPressMain={handleOnAddProductBtnClick}
+      <FloatingButton
+        icon={() => <PlusOutlineIcon width={24} height={24} fill="#ffffff" />}
+        onPress={handleOnAddProductBtnClick}
       />
-    </View>
+    </Layout>
   );
 };
 

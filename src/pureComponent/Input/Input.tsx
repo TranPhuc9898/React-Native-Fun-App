@@ -2,9 +2,9 @@ import React from 'react';
 import {
   Input as KittenInput,
   InputProps as KittenInputProps,
-  Text,
 } from '@ui-kitten/components';
-import {StyleProp, StyleSheet, TextStyle} from 'react-native';
+import {StyleProp, TextStyle} from 'react-native';
+import ErrorText from './ErrorText';
 
 type InputProps = {
   errorMessage?: string;
@@ -26,6 +26,7 @@ const Input: React.FC<InputProps> = ({
   formatNumber,
   keyboardType,
   errorTextStyle,
+  onBlur,
   onChangeText,
 }) => {
   const handleOnChangeText = (value) => {
@@ -43,22 +44,17 @@ const Input: React.FC<InputProps> = ({
         multiline={multiline}
         placeholder={placeholder}
         onChangeText={handleOnChangeText}
+        onBlur={onBlur}
         value={value}
       />
       {showError && (
-        <Text style={StyleSheet.flatten([styles.errorText, errorTextStyle])}>
-          {errorMessage}
-        </Text>
+        <ErrorText
+          errorMessage={errorMessage || ''}
+          errorTextStyle={errorTextStyle}
+        />
       )}
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  errorText: {
-    marginTop: 8,
-    color: '#B00020',
-  },
-});
 
 export default Input;
