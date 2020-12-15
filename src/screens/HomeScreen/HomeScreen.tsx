@@ -11,12 +11,15 @@ import {FloatingAction} from 'react-native-floating-action';
 const HomeScreen = ({navigation}) => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
-    firestore()
+    const subscriber = firestore()
       .collection('products')
       .onSnapshot((QuerySnapshot) => {
         const data = QuerySnapshot.docs.map((doc) => doc.data()) as Product[];
         setProducts(data);
       });
+    return () => {
+      subscriber();
+    };
   }, []);
 
   const renderProductItem = ({item}: {item: Product}) => {
