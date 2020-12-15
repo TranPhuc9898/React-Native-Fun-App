@@ -1,12 +1,29 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, Platform, StyleProp} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 import {Formik} from 'formik';
 import {Layout, Button} from '@ui-kitten/components';
 import * as Yup from 'yup';
 
+import {
+  getUploadUri,
+  getUploadFileName,
+  uploadImage,
+  getDownloadUrl,
+  addProduct,
+} from '../../utils';
+
 import NumberFormat from 'react-number-format';
+import {
+  ImageLibraryOptions,
+  ImagePickerResponse,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import Input from '../../pureComponent/Input';
 import commonStyles from '../../theme/commonStyles';
+import PreviewImage from '../../pureComponent/PreviewImage/PreviewImage';
+import {ImageStyle} from 'react-native-fast-image';
 
 const FormProductSchema = Yup.object().shape({
   productName: Yup.string()
@@ -18,9 +35,24 @@ const FormProductSchema = Yup.object().shape({
     .max(50, 'Too Long!')
     .required('This field is required'),
   productPrice: Yup.string().required('This field is required'),
+  thumbnails: Yup.array().of(Yup.string()).length(1),
 });
 
-const FormProductModal = () => {
+const MAX_UPLOAD_IMAGE = 6;
+
+type FormProductModalNavigationProp = StackNavigationProp<any>;
+
+type Props = {
+  navigation: FormProductModalNavigationProp;
+};
+
+const FormProductModal: React.FC<Props> = ({navigation}) => {
+  const [uploading, setUploading] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState(0);
+  const [thumbnails, setThumbnails] = useState<ImagePickerResponse[]>(
+    [] as ImagePickerResponse[],
+  );
+
   return (
     <Layout
       style={StyleSheet.flatten([commonStyles.fullScreen, commonStyles.p3])}>
@@ -29,14 +61,60 @@ const FormProductModal = () => {
           productName: '',
           productDescription: '',
           productPrice: '',
+          thumbnails: [],
         }}
         validationSchema={FormProductSchema}
         validateOnChange={false}
-        validateOnBlur={false}
-        onSubmit={(values) => {
-          console.log('TCL: FormProductModal -> values', values);
+        onSubmit={async (values) => {
+          await addProduct({
+            productName: values.productName,
+            productDescription: values.productDescription,
+            productPrice: values.productPrice.replace('.', ''),
+            productImage: {
+              landscape: '',
+              portrait: '',
+              thumbnails: values.thumbnails,
+            },
+          });
+          navigation.goBack();
         }}>
-        {({handleChange, handleSubmit, values, errors, setFieldValue}) => {
+        {({
+          handleChange,
+          handleSubmit,
+          values,
+          errors,
+          setFieldValue,
+          isSubmitting,
+        }) => {
+          const handleUploadImage = () => {
+            launchImageLibrary(
+              {} as ImageLibraryOptions,
+              async (response: ImagePickerResponse) => {
+                const uri = response.uri;
+                if (uri) {
+                  const updatedThumbnails = [...thumbnails, response];
+                  setThumbnails(updatedThumbnails);
+                  setUploadingIndex(updatedThumbnails.length - 1);
+                  if (uri) {
+                    const fileName = getUploadFileName(uri);
+                    const uploadUri = getUploadUri(uri, Platform.OS);
+                    setUploading(true);
+                    try {
+                      await uploadImage(fileName, uploadUri);
+                      const downloadUrl = await getDownloadUrl(fileName);
+                      setFieldValue('thumbnails', [
+                        ...values.thumbnails,
+                        downloadUrl,
+                      ]);
+                    } catch (error) {
+                      console.error(error);
+                    }
+                    setUploading(false);
+                  }
+                }
+              },
+            );
+          };
           return (
             <View style={commonStyles.fullScreen}>
               <Input
@@ -66,8 +144,6 @@ const FormProductModal = () => {
                 thousandSeparator={'.'}
                 decimalSeparator={','}
                 displayType={'text'}
-                // decimalScale={2}
-                // fixedDecimalScale={true}
                 renderText={(value) => (
                   <Input
                     style={commonStyles.mt3}
@@ -83,7 +159,50 @@ const FormProductModal = () => {
                 )}
               />
 
-              <Button style={commonStyles.mt3} onPress={handleSubmit}>
+              <View
+                style={StyleSheet.flatten([
+                  commonStyles.flexWrap,
+                  commonStyles.row,
+                  commonStyles.alignItemsCenter,
+                  commonStyles.p2,
+                  commonStyles.mt3,
+                  styles.previewImageContainer,
+                ])}>
+                {thumbnails.map((item, index) => {
+                  const previewImageStyle: StyleProp<ImageStyle> = {
+                    aspectRatio:
+                      item.width && item.height
+                        ? item.width / item.height
+                        : 1 / 1,
+                    width: 100,
+                  };
+
+                  return (
+                    <PreviewImage
+                      containerStyle={styles.previewImageContainer}
+                      imageStyle={previewImageStyle}
+                      loading={uploading && uploadingIndex === index}
+                      key={item.uri}
+                      source={{uri: item.uri}}
+                    />
+                  );
+                })}
+                <Button
+                  style={styles.buttonUpload}
+                  disabled={
+                    thumbnails.length === MAX_UPLOAD_IMAGE ||
+                    uploading ||
+                    isSubmitting
+                  }
+                  onPress={handleUploadImage}>
+                  {'Upload Image'}
+                </Button>
+              </View>
+
+              <Button
+                style={commonStyles.mt3}
+                disabled={uploading || isSubmitting}
+                onPress={handleSubmit}>
                 {'Save'}
               </Button>
             </View>
@@ -100,6 +219,17 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     paddingTop: 0,
     paddingBottom: 0,
+  },
+  previewImageContainer: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'blue',
+    marginTop: 8,
+    marginHorizontal: 4,
+  },
+  buttonUpload: {
+    width: 110,
+    height: 110,
   },
 });
 

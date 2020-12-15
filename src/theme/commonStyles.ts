@@ -31,6 +31,15 @@ export default StyleSheet.create({
   justifyContentCenter: {
     justifyContent: 'center',
   },
+  justifyContentBetween: {
+    justifyContent: 'space-between',
+  },
+  flexWrap: {
+    flexWrap: 'wrap',
+  },
+  row: {
+    flexDirection: 'row',
+  },
   alignItemsCenter: {
     alignItems: 'center',
   },

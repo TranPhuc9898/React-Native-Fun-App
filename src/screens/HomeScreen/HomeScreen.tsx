@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Product} from '../../types/types';
 import {FlatList} from 'react-native-gesture-handler';
@@ -23,7 +23,7 @@ const HomeScreen = ({navigation}) => {
     return (
       <ProductCard
         cardHeadline={item.brandName}
-        cardImage={item.productImage.thumbnail[0]}
+        cardImage={item.productImage.thumbnails[0]}
         cardTitle={item.productName}
         cardSubtitle={getCurrencyFormat(
           'VN',
@@ -47,9 +47,12 @@ const HomeScreen = ({navigation}) => {
         data={products}
         extraData={products}
         renderItem={renderProductItem}
-        keyExtractor={(item) => item.productId}
+        keyExtractor={(item, index) =>
+          `${item.productId}${index}${item.productName}`
+        }
       />
       <FloatingAction
+        animated={false}
         showBackground={false}
         onPressMain={handleOnAddProductBtnClick}
       />
