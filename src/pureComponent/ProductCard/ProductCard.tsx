@@ -14,6 +14,7 @@ type ProductCardProps = {
   cardHeadline?: string;
   cardTitle?: string;
   cardSubtitle?: string;
+  onCardPress?: (event: GestureResponderEvent) => void;
   onCardLongPress?: (event: GestureResponderEvent) => void;
 };
 
@@ -22,10 +23,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
   cardHeadline,
   cardTitle,
   cardSubtitle,
+  onCardPress,
   onCardLongPress,
 }) => {
   return (
-    <TouchableOpacity style={styles.defaultCard} onLongPress={onCardLongPress}>
+    <TouchableOpacity
+      style={styles.defaultCard}
+      onPress={onCardPress}
+      onLongPress={onCardLongPress}>
       <FastImage
         style={styles.defaultImage}
         source={{uri: cardImage}}

@@ -1,3 +1,5 @@
+import 'intl';
+import 'intl/locale-data/jsonp/en';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 // UI Kitten

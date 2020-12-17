@@ -5,6 +5,7 @@ import {
   getDownloadUrl,
   addProduct,
   deleteProduct,
+  getProductById,
 } from './firebase';
 export {
   getCurrencyFormat,
@@ -14,4 +15,5 @@ export {
   getDownloadUrl,
   addProduct,
   deleteProduct,
+  getProductById,
 };

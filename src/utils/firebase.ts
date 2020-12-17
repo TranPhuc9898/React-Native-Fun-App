@@ -26,4 +26,11 @@ const deleteProduct = async (id: string) => {
   return await firestore().collection(MY_COLLECTION.PRODUCTS).doc(id).delete();
 };
 
-export {uploadImage, getDownloadUrl, addProduct, deleteProduct};
+const getProductById = async (productId: string) => {
+  return await firestore()
+    .collection(MY_COLLECTION.PRODUCTS)
+    .doc(productId)
+    .get();
+};
+
+export {uploadImage, getDownloadUrl, addProduct, deleteProduct, getProductById};

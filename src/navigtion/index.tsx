@@ -11,6 +11,7 @@ import AppNavigation, {Screen} from './AppNavigation';
 import {TabItem} from './TabNavigator';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import FormProductModal from '../modals/FormProductModal/FormProductModal';
+import DetailsProductScreen from '../screens/DetailsProductScreen/DetailsProductScreen';
 
 function DetailsScreen() {
   return (
@@ -32,13 +33,21 @@ function SettingsScreen({navigation}: {navigation: StackNavigationProp}) {
   );
 }
 
-const HomeStack = createStackNavigator();
+export type HomeStackParamList = {
+  Home: undefined;
+  DetailsProduct: {productId: string};
+};
+
+const HomeStack = createStackNavigator<HomeStackParamList>();
 
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="Details" component={DetailsScreen} />
+      <HomeStack.Screen
+        name="DetailsProduct"
+        component={DetailsProductScreen}
+      />
     </HomeStack.Navigator>
   );
 }

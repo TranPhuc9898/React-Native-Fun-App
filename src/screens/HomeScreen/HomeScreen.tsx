@@ -3,6 +3,7 @@ import {Alert, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {StackNavigationProp} from '@react-navigation/stack';
 
+import {HomeStackParamList} from '../../navigtion';
 import {deleteProduct} from '../../utils';
 
 import {Layout} from '@ui-kitten/components/ui';
@@ -14,13 +15,18 @@ import {getCurrencyFormat} from '../../utils';
 import commonStyles from '../../theme/commonStyles';
 import FloatingButton from '../../pureComponent/FloatingButton';
 
-const HomeScreen = ({navigation}: {navigation: StackNavigationProp<any>}) => {
+type HomeScreenNavigationProp = StackNavigationProp<HomeStackParamList, 'Home'>;
+
+type Props = {
+  navigation: HomeScreenNavigationProp;
+};
+
+const HomeScreen: React.FC<Props> = ({navigation}) => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     const subscriber = firestore()
       .collection('products')
       .onSnapshot((QuerySnapshot) => {
-        console.log('TCL: HomeScreen -> QuerySnapshot', QuerySnapshot);
         const data = QuerySnapshot.docs.map(
           (doc) =>
             ({
@@ -61,6 +67,12 @@ const HomeScreen = ({navigation}: {navigation: StackNavigationProp<any>}) => {
       );
     };
 
+    const handleOnCardPress = () => {
+      navigation.push('DetailsProduct', {
+        productId: item.id,
+      });
+    };
+
     return (
       <ProductCard
         cardHeadline={item.brandName}
@@ -72,6 +84,7 @@ const HomeScreen = ({navigation}: {navigation: StackNavigationProp<any>}) => {
           'VND',
           Number(item.productPrice),
         )}
+        onCardPress={handleOnCardPress}
         onCardLongPress={handleOnCardLongPress}
       />
     );

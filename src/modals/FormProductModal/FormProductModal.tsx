@@ -103,22 +103,21 @@ const FormProductModal: React.FC<Props> = ({navigation}) => {
                   const updatedThumbnails = [...thumbnails, response];
                   setThumbnails(updatedThumbnails);
                   setUploadingIndex(updatedThumbnails.length - 1);
-                  if (uri) {
-                    const fileName = getUploadFileName(uri);
-                    const uploadUri = getUploadUri(uri, Platform.OS);
-                    setUploading(true);
-                    try {
-                      await uploadImage(fileName, uploadUri);
-                      const downloadUrl = await getDownloadUrl(fileName);
-                      setFieldValue('thumbnails', [
-                        ...values.thumbnails,
-                        downloadUrl,
-                      ]);
-                    } catch (error) {
-                      console.error(error);
-                    }
-                    setUploading(false);
-                  }
+
+                  // const fileName = getUploadFileName(uri);
+                  // const uploadUri = getUploadUri(uri, Platform.OS);
+                  // setUploading(true);
+                  // try {
+                  //   await uploadImage(fileName, uploadUri);
+                  //   const downloadUrl = await getDownloadUrl(fileName);
+                  //   setFieldValue('thumbnails', [
+                  //     ...values.thumbnails,
+                  //     downloadUrl,
+                  //   ]);
+                  // } catch (error) {
+                  //   console.error(error);
+                  // }
+                  // setUploading(false);
                 }
               },
             );

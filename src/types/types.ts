@@ -1,3 +1,10 @@
+import {StackNavigationProp} from '@react-navigation/stack';
+
+export type CommonNavigationTypes = {
+  navigation: StackNavigationProp<any>;
+  route: StackNavigationProp<any>;
+};
+
 type Image = {
   landscape: string;
   portrait: string;

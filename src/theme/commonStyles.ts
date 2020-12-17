@@ -46,4 +46,7 @@ export default StyleSheet.create({
   textCenter: {
     textAlign: 'center',
   },
+  absolute: {
+    position: 'absolute',
+  },
 });
