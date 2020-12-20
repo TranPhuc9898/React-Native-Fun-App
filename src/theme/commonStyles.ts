@@ -49,4 +49,7 @@ export default StyleSheet.create({
   absolute: {
     position: 'absolute',
   },
+  w100: {
+    width: '100%',
+  },
 });

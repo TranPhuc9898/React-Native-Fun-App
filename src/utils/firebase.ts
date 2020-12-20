@@ -7,15 +7,12 @@ enum MY_COLLECTION {
   PRODUCTS = 'products',
 }
 
-const uploadImage = async (fileName: string, uploadUri: string) => {
-  const task = storage().ref(fileName).putFile(uploadUri);
-  const result = await task;
-  return result;
+const uploadImage = (fileName: string, uploadUri: string) => {
+  return storage().ref(fileName).putFile(uploadUri);
 };
 
 const getDownloadUrl = async (fileName: string) => {
-  const url = storage().ref(fileName).getDownloadURL();
-  return url;
+  return await storage().ref(fileName).getDownloadURL();
 };
 
 const addProduct = async (product: Product) => {
